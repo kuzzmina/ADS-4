@@ -1,6 +1,5 @@
 // Copyright 2021 NNTU-CS
 #include <iostream>
-#include <algorithm>
 
 int countPairs1(int *arr, int len, int value)
 {
@@ -53,14 +52,13 @@ int countPairs2(int *arr, int len, int value)
 
 int binarySearch(int *arr, int left, int right, int target)
 {
-    int count = 0;
     while (left <= right)
     {
         int mid = (left + right) / 2;
         if (arr[mid] == target)
         {
+            int count = 1;
             int idx = mid;
-            count = 1;
             while (--idx >= left && arr[idx] == target) ++count;
             idx = mid;
             while (++idx <= right && arr[idx] == target) ++count;
