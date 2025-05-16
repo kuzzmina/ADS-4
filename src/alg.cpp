@@ -25,15 +25,15 @@ int countPairs2(int* arr, int len, int value) {
                 count += n * (n - 1) / 2;
                 break;
             }
-            int l = arr[left];
-            int r = arr[right];
+            int lval = arr[left];
+            int rval = arr[right];
             int lcount = 0;
             int rcount = 0;
-            while (left <= right && arr[left] == l) {
+            while (left <= right && arr[left] == lval) {
                 ++lcount;
                 ++left;
             }
-            while (right >= left && arr[right] == r) {
+            while (right >= left && arr[right] == rval) {
                 ++rcount;
                 --right;
             }
@@ -66,7 +66,8 @@ int countPairs3(int* arr, int len, int value) {
         int complement = value - arr[i];
         int pos = binarySearch(arr, i + 1, len - 1, complement);
         if (pos == -1) continue;
-        int left = pos, right = pos;
+        int left = pos;
+        int right = pos;
         while (left > i && arr[left - 1] == complement) --left;
         while (right + 1 < len && arr[right + 1] == complement) ++right;
         count += (right - left + 1);
