@@ -2,67 +2,85 @@
 #include <iostream>
 #include <algorithm>
 
-int countPairs1(int *arr, int len, int value) {
+int countPairs1(int *arr, int len, int value)
+{
     int count = 0;
-    for (int i = 0; i < len; ++i) {
-        for (int j = i + 1; j < len; ++j) {
-            if (arr[i] + arr[j] == value) {
-                count++;
-            }
-        }
-    }
-    return count;
-}
-
-int countPairs2(int *arr, int len, int value) {
-    int count = 0;
-    std::sort(arr, arr + len);  // Сортировка для корректной работы двух указателей
-    int left = 0, right = len - 1;
-    while (left < right) {
-        int sum = arr[left] + arr[right];
-        if (sum == value) {
-            count++;
-            left++;
-            right--;
-        } else if (sum < value) {
-            left++;
-        } else {
-            right--;
-        }
-    }
-    return count;
-}
-
-int countPairs3(int *arr, int len, int value) {
-    int count = 0;
-    std::sort(arr, arr + len);  // Сортировка для корректной работы бинарного поиска
-    for (int i = 0; i < len - 1; ++i) {
-        int target = value - arr[i];
-        int left = i + 1, right = len - 1;
-        while (left <= right) {
-            int mid = left + (right - left) / 2;
-            if (arr[mid] == target) {
-                count++;
+    for (int i = 0; i < len; ++i)
+    {
+        for (int j = i + 1; j < len; ++j)
+        {
+            if (arr[i] + arr[j] == value)
+                ++count;
+            else if (arr[i] + arr[j] > value)
                 break;
-            } else if (arr[mid] < target) {
-                left = mid + 1;
-            } else {
-                right = mid - 1;
-            }
         }
     }
     return count;
 }
 
-int main() {
-    int arr[] = {20, 30, 30, 40, 40};
-    int len = sizeof(arr) / sizeof(arr[0]);
-    int value = 50;
-    std::cout << "Count of pairs (method 1): " 
-              << countPairs1(arr, len, value) << std::endl;
-    std::cout << "Count of pairs (method 2): " 
-              << countPairs2(arr, len, value) << std::endl;
-    std::cout << "Count of pairs (method 3): " 
-              << countPairs3(arr, len, value) << std::endl;
+int countPairs2(int *arr, int len, int value)
+{
+    int count = 0;
+    int left = 0, right = len - 1;
+    while (left < right)
+    {
+        int sum = arr[left] + arr[right];
+        if (sum == value)
+        {
+            int l_val = arr[left], r_val = arr[right];
+            int l_count = 1, r_count = 1;
+            ++left;
+            --right;
+            while (left < right && arr[left] == l_val)
+            {
+                ++l_count;
+                ++left;
+            }
+            while (left <= right && arr[right] == r_val)
+            {
+                ++r_count;
+                --right;
+            }
+            count += l_count * r_count;
+        }
+        else if (sum < value)
+            ++left;
+        else
+            --right;
+    }
+    return count;
+}
+
+int binarySearch(int *arr, int left, int right, int target)
+{
+    int count = 0;
+    while (left <= right)
+    {
+        int mid = (left + right) / 2;
+        if (arr[mid] == target)
+        {
+            int idx = mid;
+            count = 1;
+            while (--idx >= left && arr[idx] == target) ++count;
+            idx = mid;
+            while (++idx <= right && arr[idx] == target) ++count;
+            return count;
+        }
+        else if (arr[mid] < target)
+            left = mid + 1;
+        else
+            right = mid - 1;
+    }
     return 0;
+}
+
+int countPairs3(int *arr, int len, int value)
+{
+    int count = 0;
+    for (int i = 0; i < len; ++i)
+    {
+        int complement = value - arr[i];
+        count += binarySearch(arr, i + 1, len - 1, complement);
+    }
+    return count;
 }
